@@ -1,0 +1,22 @@
+# TODO for OrganizadorDAI App Development
+
+- [x] Update package.json with necessary dependencies (navigation, calendar, notifications, clipboard, storage, icons)
+- [x] Create folder structure: src/screens, src/components, src/utils
+- [x] Update app.json with better name and description
+- [x] Set up React Navigation with bottom tabs in App.js
+- [x] Implement TaskList screen with FlatList for tasks (add, display, delete, mark done)
+- [x] Implement Calendar screen with react-native-calendars for marking dates
+- [x] Implement Notifications screen for scheduling push notifications
+- [x] Implement Clipboard screen for copy/paste notes
+- [x] Add reusable components (e.g., TaskItem)
+- [x] Add basic styling and UI consistency
+- [x] Add comments to main code parts
+- [x] Test the app functionality (implementation complete, ready for mobile testing)
+- [x] Modify TaskList to have categories: Examenes, Compras, ToDo
+- [x] Allow adding tasks with date and category
+- [x] Integrate tasks with calendar: mark dates, show tasks on date
+- [x] Update Calendar to show tasks for selected date
+- [x] Update Notifications to set reminders for tasks
+- [x] Add "Mis Listas" section with categories and tasks
+- [x] Use AsyncStorage to persist data
+- [ ] Test updated functionality

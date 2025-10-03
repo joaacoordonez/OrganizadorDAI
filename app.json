@@ -1,7 +1,7 @@
 {
   "expo": {
-    "name": "tpfinaldai",
-    "slug": "tpfinaldai",
+    "name": "OrganizadorDAI",
+    "slug": "organizadordai",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
