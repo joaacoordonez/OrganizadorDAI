@@ -17,7 +17,8 @@ const ClipboardScreen = () => {
 
   const pasteFromClipboard = async () => {
     const clipboardContent = await Clipboard.getStringAsync();
-    setText(clipboardContent);
+    const textoanterior = text
+    setText(textoanterior + clipboardContent);
     Alert.alert('Pegado', 'Texto pegado desde el portapapeles.');
   };
 

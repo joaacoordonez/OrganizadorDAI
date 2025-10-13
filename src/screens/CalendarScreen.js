@@ -40,7 +40,7 @@ const CalendarScreen = () => {
 
   return (
     <LinearGradient colors={['#F3E5F5', '#E1BEE7']} style={styles.container}>
-      <Text style={styles.title}>Calendario de Exámenes y Entregas</Text>
+      <Text style={styles.title}>Calendario de Tareas</Text>
       <Calendar
         onDayPress={onDayPress}
         markedDates={{
