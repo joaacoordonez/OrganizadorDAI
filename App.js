@@ -3,6 +3,7 @@ import { NavigationContainer } from '@react-navigation/native';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { StatusBar } from 'expo-status-bar';
+import { LinearGradient } from 'expo-linear-gradient';
 import { TaskProvider } from './src/context/TaskContext';
 import MisListasScreen from './src/screens/MisListasScreen';
 import CategoryTasksScreen from './src/screens/CategoryTasksScreen';
@@ -17,7 +18,7 @@ const Stack = createNativeStackNavigator();
 const MisListasStack = () => (
   <Stack.Navigator
     screenOptions={{
-      headerStyle: { backgroundColor: '#00adf5' },
+      headerStyle: { backgroundColor: '#FF5722' },
       headerTintColor: '#fff',
       headerTitleStyle: { fontWeight: 'bold' },
     }}
@@ -35,10 +36,18 @@ export default function App() {
         <StatusBar style="auto" />
         <Tab.Navigator
           screenOptions={{
-            tabBarActiveTintColor: '#00adf5',
+            tabBarActiveTintColor: '#FF5722',
             tabBarInactiveTintColor: '#666',
-            tabBarStyle: { backgroundColor: '#fff' },
-            headerStyle: { backgroundColor: '#00adf5' },
+            tabBarStyle: {
+              backgroundColor: '#fff',
+              borderTopWidth: 0,
+              shadowColor: '#000',
+              shadowOffset: { width: 0, height: -2 },
+              shadowOpacity: 0.1,
+              shadowRadius: 4,
+              elevation: 5,
+            },
+            headerStyle: { backgroundColor: '#FF5722' },
             headerTintColor: '#fff',
             headerTitleStyle: { fontWeight: 'bold' },
           }}

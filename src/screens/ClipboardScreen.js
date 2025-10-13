@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
-import { View, Text, TextInput, Button, StyleSheet, Alert } from 'react-native';
+import { View, Text, TextInput, TouchableOpacity, StyleSheet, Alert } from 'react-native';
+import { LinearGradient } from 'expo-linear-gradient';
 import * as Clipboard from 'expo-clipboard';
 
 const ClipboardScreen = () => {
@@ -21,39 +22,80 @@ const ClipboardScreen = () => {
   };
 
   return (
-    <View style={styles.container}>
+    <LinearGradient colors={['#FFF8E1', '#FFECB3']} style={styles.container}>
       <Text style={styles.title}>Portapapeles</Text>
+      <Text style={styles.subtitle}>Notas rápidas y útiles</Text>
       <TextInput
         style={styles.input}
         placeholder="Escriba notas rápidas aquí"
         value={text}
         onChangeText={setText}
         multiline
-        numberOfLines={4}
+        numberOfLines={6}
+        placeholderTextColor="#666"
       />
       <View style={styles.buttonRow}>
-        <Button title="Copiar" onPress={copyToClipboard} />
-        <Button title="Pegar" onPress={pasteFromClipboard} />
+        <TouchableOpacity style={styles.copyButton} onPress={copyToClipboard}>
+          <LinearGradient colors={['#FF9800', '#F57C00']} style={styles.buttonGradient}>
+            <Text style={styles.buttonText}>Copiar</Text>
+          </LinearGradient>
+        </TouchableOpacity>
+        <TouchableOpacity style={styles.pasteButton} onPress={pasteFromClipboard}>
+          <LinearGradient colors={['#2196F3', '#1976D2']} style={styles.buttonGradient}>
+            <Text style={styles.buttonText}>Pegar</Text>
+          </LinearGradient>
+        </TouchableOpacity>
       </View>
-    </View>
+    </LinearGradient>
   );
 };
 
 const styles = StyleSheet.create({
-  container: { flex: 1, padding: 16, backgroundColor: '#f5f5f5' },
-  title: { fontSize: 22, fontWeight: 'bold', marginBottom: 12, textAlign: 'center', color: '#333' },
+  container: { flex: 1, padding: 16 },
+  title: { fontSize: 28, fontWeight: 'bold', marginBottom: 8, textAlign: 'center', color: '#E65100' },
+  subtitle: { fontSize: 16, marginBottom: 20, textAlign: 'center', color: '#F57C00' },
   input: {
-    borderColor: '#ccc',
-    borderWidth: 1,
-    borderRadius: 4,
-    paddingHorizontal: 8,
-    paddingVertical: 8,
-    marginBottom: 12,
-    height: 120,
+    borderColor: '#FF9800',
+    borderWidth: 2,
+    borderRadius: 12,
+    paddingHorizontal: 12,
+    paddingVertical: 12,
+    marginBottom: 20,
+    height: 150,
     backgroundColor: '#fff',
+    fontSize: 16,
     textAlignVertical: 'top',
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+    elevation: 3,
   },
   buttonRow: { flexDirection: 'row', justifyContent: 'space-around' },
+  copyButton: {
+    borderRadius: 12,
+    overflow: 'hidden',
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.3,
+    shadowRadius: 6,
+    elevation: 8,
+  },
+  pasteButton: {
+    borderRadius: 12,
+    overflow: 'hidden',
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.3,
+    shadowRadius: 6,
+    elevation: 8,
+  },
+  buttonGradient: {
+    paddingHorizontal: 20,
+    paddingVertical: 12,
+    alignItems: 'center',
+  },
+  buttonText: { color: '#fff', fontSize: 16, fontWeight: 'bold' },
 });
 
 export default ClipboardScreen;

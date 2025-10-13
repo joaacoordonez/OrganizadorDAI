@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { View, StyleSheet, Text, FlatList } from 'react-native';
 import { Calendar, LocaleConfig } from 'react-native-calendars';
+import { LinearGradient } from 'expo-linear-gradient';
 import { useTasks } from '../context/TaskContext';
 
 // Configurar locale en español para el calendario
@@ -27,24 +28,51 @@ const CalendarScreen = () => {
 
   const renderTask = ({ item }) => (
     <View style={styles.taskItem}>
-      <Text style={styles.taskText}>{item.text}</Text>
-      <Text style={styles.taskCategory}>{item.category}</Text>
+      <LinearGradient
+        colors={['#E8F5E8', '#C8E6C9']}
+        style={styles.taskGradient}
+      >
+        <Text style={styles.taskText}>{item.text}</Text>
+        <Text style={styles.taskCategory}>{item.category}</Text>
+      </LinearGradient>
     </View>
   );
 
   return (
-    <View style={styles.container}>
+    <LinearGradient colors={['#F3E5F5', '#E1BEE7']} style={styles.container}>
       <Text style={styles.title}>Calendario de Exámenes y Entregas</Text>
       <Calendar
         onDayPress={onDayPress}
         markedDates={{
           ...markedDates,
-          ...(selectedDate && { [selectedDate]: { ...markedDates[selectedDate], selected: true, selectedColor: '#ff6b6b' } })
+          ...(selectedDate && { [selectedDate]: { ...markedDates[selectedDate], selected: true, selectedColor: '#9C27B0' } })
         }}
         theme={{
-          selectedDayBackgroundColor: '#00adf5',
-          todayTextColor: '#00adf5',
-          arrowColor: '#00adf5',
+          selectedDayBackgroundColor: '#9C27B0',
+          todayTextColor: '#9C27B0',
+          arrowColor: '#9C27B0',
+          calendarBackground: '#fff',
+          textSectionTitleColor: '#9C27B0',
+          textSectionTitleDisabledColor: '#d9e1e8',
+          selectedDayTextColor: '#fff',
+          todayTextColor: '#9C27B0',
+          dayTextColor: '#2d4150',
+          textDisabledColor: '#d9e1e8',
+          dotColor: '#9C27B0',
+          selectedDotColor: '#fff',
+          arrowColor: '#9C27B0',
+          disabledArrowColor: '#d9e1e8',
+          monthTextColor: '#9C27B0',
+          indicatorColor: '#9C27B0',
+          textDayFontFamily: 'monospace',
+          textMonthFontFamily: 'monospace',
+          textDayHeaderFontFamily: 'monospace',
+          textDayFontWeight: '300',
+          textMonthFontWeight: 'bold',
+          textDayHeaderFontWeight: '300',
+          textDayFontSize: 16,
+          textMonthFontSize: 18,
+          textDayHeaderFontSize: 14
         }}
       />
       {selectedDate && (
@@ -58,29 +86,32 @@ const CalendarScreen = () => {
           />
         </View>
       )}
-    </View>
+    </LinearGradient>
   );
 };
 
 const styles = StyleSheet.create({
-  container: { flex: 1, padding: 16, backgroundColor: '#f5f5f5' },
-  title: { fontSize: 22, fontWeight: 'bold', marginBottom: 12, textAlign: 'center', color: '#333' },
+  container: { flex: 1, padding: 16 },
+  title: { fontSize: 24, fontWeight: 'bold', marginBottom: 16, textAlign: 'center', color: '#7B1FA2' },
   tasksContainer: { flex: 1, marginTop: 16 },
-  selectedDateTitle: { fontSize: 18, fontWeight: 'bold', marginBottom: 8, color: '#333' },
+  selectedDateTitle: { fontSize: 20, fontWeight: 'bold', marginBottom: 12, color: '#7B1FA2', textAlign: 'center' },
   taskItem: {
-    backgroundColor: '#fff',
-    padding: 12,
-    borderRadius: 8,
-    marginBottom: 8,
+    marginBottom: 12,
+    borderRadius: 12,
+    overflow: 'hidden',
     shadowColor: '#000',
-    shadowOffset: { width: 0, height: 1 },
-    shadowOpacity: 0.1,
-    shadowRadius: 2,
-    elevation: 2,
+    shadowOffset: { width: 0, height: 3 },
+    shadowOpacity: 0.3,
+    shadowRadius: 5,
+    elevation: 6,
   },
-  taskText: { fontSize: 16, color: '#333' },
-  taskCategory: { fontSize: 12, color: '#666', marginTop: 4 },
-  emptyText: { textAlign: 'center', marginTop: 20, color: '#999' },
+  taskGradient: {
+    padding: 16,
+    alignItems: 'center',
+  },
+  taskText: { fontSize: 18, color: '#333', fontWeight: 'bold', marginBottom: 4 },
+  taskCategory: { fontSize: 14, color: '#666' },
+  emptyText: { textAlign: 'center', marginTop: 20, color: '#666', fontSize: 16 },
 });
 
 export default CalendarScreen;

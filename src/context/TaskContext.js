@@ -7,10 +7,11 @@ export const useTasks = () => useContext(TaskContext);
 
 export const TaskProvider = ({ children }) => {
   const [tasks, setTasks] = useState([]);
-  const categories = ['Examenes', 'Compras', 'ToDo'];
+  const [categories, setCategories] = useState(['Examenes', 'Compras', 'ToDo']);
 
   useEffect(() => {
     loadTasks();
+    loadCategories();
   }, []);
 
   const loadTasks = async () => {
@@ -24,12 +25,32 @@ export const TaskProvider = ({ children }) => {
     }
   };
 
+  const loadCategories = async () => {
+    try {
+      const storedCategories = await AsyncStorage.getItem('categories');
+      if (storedCategories) {
+        setCategories(JSON.parse(storedCategories));
+      }
+    } catch (error) {
+      console.error('Error loading categories:', error);
+    }
+  };
+
   const saveTasks = async (newTasks) => {
     try {
       await AsyncStorage.setItem('tasks', JSON.stringify(newTasks));
       setTasks(newTasks);
     } catch (error) {
       console.error('Error saving tasks:', error);
+    }
+  };
+
+  const saveCategories = async (newCategories) => {
+    try {
+      await AsyncStorage.setItem('categories', JSON.stringify(newCategories));
+      setCategories(newCategories);
+    } catch (error) {
+      console.error('Error saving categories:', error);
     }
   };
 
@@ -47,6 +68,13 @@ export const TaskProvider = ({ children }) => {
   const deleteTask = (id) => {
     const newTasks = tasks.filter(task => task.id !== id);
     saveTasks(newTasks);
+  };
+
+  const addCategory = (newCategory) => {
+    if (!categories.includes(newCategory)) {
+      const newCategories = [...categories, newCategory];
+      saveCategories(newCategories);
+    }
   };
 
   const getTasksByCategory = (category) => {
@@ -73,6 +101,7 @@ export const TaskProvider = ({ children }) => {
       categories,
       addTask,
       deleteTask,
+      addCategory,
       getTasksByCategory,
       getTasksByDate,
       getMarkedDates,
