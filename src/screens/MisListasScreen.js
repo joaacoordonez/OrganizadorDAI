@@ -1,38 +1,58 @@
 import React, { useState } from 'react';
 import { View, Text, FlatList, StyleSheet, TouchableOpacity, TextInput, Alert, Modal, Button } from 'react-native';
-import { LinearGradient } from 'expo-linear-gradient';
-import { useTasks } from '../context/TaskContext';
+import { LinearGradient } from 'expo-linear-gradient'; 
+import { useTasks } from '../context/ContextoTarea'; 
 
 const MisListasScreen = ({ navigation }) => {
-  const { categories, getTasksByCategory, addCategory } = useTasks();
+
+  const { categorias, obtenerTareasPorCategoria, agregarCategoria, eliminarCategoria } = useTasks();
   const [modalVisible, setModalVisible] = useState(false);
-  const [newCategory, setNewCategory] = useState('');
+  const [nuevaCategoria, setNuevaCategoria] = useState(''); 
 
   const renderCategory = ({ item }) => {
-    const tasks = getTasksByCategory(item);
+    const tareas = obtenerTareasPorCategoria(item);
     return (
-      <TouchableOpacity
-        style={styles.categoryItem}
-        onPress={() => navigation.navigate('CategoryTasks', { category: item })}
-      >
-        <LinearGradient
-          colors={['#4CAF50', '#45a049']}
-          style={styles.categoryGradient}
+      <View style={styles.categoryItem}>
+        <TouchableOpacity
+          style={styles.categoryTouchable}
+          onPress={() => navigation.navigate('CategoriaTareasScreen', { category: item })}
         >
-          <Text style={styles.categoryTitle}>{item}</Text>
-          <Text style={styles.taskCount}>{tasks.length} tareas</Text>
-        </LinearGradient>
-      </TouchableOpacity>
+          <LinearGradient
+            colors={['#4CAF50', '#45a049']}
+            style={styles.categoryGradient}
+          >
+            <Text style={styles.categoryTitle}>{item}</Text>
+            <Text style={styles.taskCount}>{tareas.length} tareas</Text>
+          </LinearGradient>
+        </TouchableOpacity>
+        <TouchableOpacity
+          style={styles.deleteButton}
+          onPress={() => confirmarEliminarCategoria(item)}
+        >
+          <Text style={styles.deleteButtonText}>Eliminar</Text>
+        </TouchableOpacity>
+      </View>
     );
   };
 
-  const handleAddCategory = () => {
-    if (!newCategory.trim()) {
+  const confirmarEliminarCategoria = (categoria) => {
+    Alert.alert(
+      'Eliminar categoría',
+      `¿Está seguro que desea eliminar la categoría "${categoria}"? Esto también eliminará todas las tareas en esta categoría.`,
+      [
+        { text: 'Cancelar', style: 'cancel' },
+        { text: 'Eliminar', onPress: () => eliminarCategoria(categoria) },
+      ]
+    );
+  };
+
+  const manejarAgregarCategoria = () => {
+    if (!nuevaCategoria.trim()) {
       Alert.alert('Error', 'Por favor ingrese el nombre de la categoría.');
       return;
     }
-    addCategory(newCategory.trim());
-    setNewCategory('');
+    agregarCategoria(nuevaCategoria.trim());
+    setNuevaCategoria('');
     setModalVisible(false);
     Alert.alert('Categoría agregada', 'La categoría ha sido agregada exitosamente.');
   };
@@ -44,7 +64,7 @@ const MisListasScreen = ({ navigation }) => {
         <Text style={styles.addButtonText}>+ Agregar Categoría</Text>
       </TouchableOpacity>
       <FlatList
-        data={categories}
+        data={categorias}
         keyExtractor={(item) => item}
         renderItem={renderCategory}
         ListEmptyComponent={<Text style={styles.emptyText}>No hay categorías</Text>}
@@ -62,14 +82,14 @@ const MisListasScreen = ({ navigation }) => {
             <TextInput
               style={styles.modalInput}
               placeholder="Nombre de la categoría"
-              value={newCategory}
-              onChangeText={setNewCategory}
+              value={nuevaCategoria}
+              onChangeText={setNuevaCategoria}
             />
             <View style={styles.modalButtons}>
               <TouchableOpacity style={styles.cancelButton} onPress={() => setModalVisible(false)}>
                 <Text style={styles.cancelButtonText}>Cancelar</Text>
               </TouchableOpacity>
-              <TouchableOpacity style={styles.confirmButton} onPress={handleAddCategory}>
+              <TouchableOpacity style={styles.confirmButton} onPress={manejarAgregarCategoria}>
                 <Text style={styles.confirmButtonText}>Agregar</Text>
               </TouchableOpacity>
             </View>
@@ -106,6 +126,20 @@ const styles = StyleSheet.create({
     shadowRadius: 5,
     elevation: 6,
   },
+  categoryTouchable: {
+    flex: 1,
+  },
+  deleteButton: {
+    backgroundColor: '#F44336',
+    padding: 10,
+    alignItems: 'center',
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.2,
+    shadowRadius: 4,
+    elevation: 4,
+  },
+  deleteButtonText: { color: 'white', fontWeight: 'bold', fontSize: 14 },
   categoryGradient: {
     padding: 20,
     alignItems: 'center',

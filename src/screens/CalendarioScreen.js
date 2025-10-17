@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { View, StyleSheet, Text, FlatList } from 'react-native';
 import { Calendar, LocaleConfig } from 'react-native-calendars';
 import { LinearGradient } from 'expo-linear-gradient';
-import { useTasks } from '../context/TaskContext';
+import { useTasks } from '../context/ContextoTarea';
 
 // Configurar locale en español para el calendario
 LocaleConfig.locales['es'] = {
@@ -14,17 +14,17 @@ LocaleConfig.locales['es'] = {
 };
 LocaleConfig.defaultLocale = 'es';
 
-const CalendarScreen = () => {
-  const { getMarkedDates, getTasksByDate } = useTasks();
-  const [selectedDate, setSelectedDate] = useState(null);
-  const markedDates = getMarkedDates();
+const CalendarioScreen = () => {
+  const { obtenerFechasMarcadas, obtenerTareasPorFecha } = useTasks();
+  const [fechaSeleccionada, setFechaSeleccionada] = useState(null);
+  const fechasMarcadas = obtenerFechasMarcadas();
 
   const onDayPress = (day) => {
-    const date = day.dateString;
-    setSelectedDate(date);
+    const fecha = day.dateString;
+    setFechaSeleccionada(fecha);
   };
 
-  const tasksForSelectedDate = selectedDate ? getTasksByDate(selectedDate) : [];
+  const tareasParaFechaSeleccionada = fechaSeleccionada ? obtenerTareasPorFecha(fechaSeleccionada) : [];
 
   const renderTask = ({ item }) => (
     <View style={styles.taskItem}>
@@ -44,8 +44,8 @@ const CalendarScreen = () => {
       <Calendar
         onDayPress={onDayPress}
         markedDates={{
-          ...markedDates,
-          ...(selectedDate && { [selectedDate]: { ...markedDates[selectedDate], selected: true, selectedColor: '#9C27B0' } })
+          ...fechasMarcadas,
+          ...(fechaSeleccionada && { [fechaSeleccionada]: { ...fechasMarcadas[fechaSeleccionada], selected: true, selectedColor: '#9C27B0' } })
         }}
         theme={{
           selectedDayBackgroundColor: '#9C27B0',
@@ -75,11 +75,11 @@ const CalendarScreen = () => {
           textDayHeaderFontSize: 14
         }}
       />
-      {selectedDate && (
+      {fechaSeleccionada && (
         <View style={styles.tasksContainer}>
-          <Text style={styles.selectedDateTitle}>Tareas para {selectedDate}:</Text>
+          <Text style={styles.selectedDateTitle}>Tareas para {fechaSeleccionada}:</Text>
           <FlatList
-            data={tasksForSelectedDate}
+            data={tareasParaFechaSeleccionada}
             keyExtractor={(item) => item.id}
             renderItem={renderTask}
             ListEmptyComponent={<Text style={styles.emptyText}>No hay tareas para esta fecha</Text>}
@@ -114,4 +114,4 @@ const styles = StyleSheet.create({
   emptyText: { textAlign: 'center', marginTop: 20, color: '#666', fontSize: 16 },
 });
 
-export default CalendarScreen;
+export default CalendarioScreen;

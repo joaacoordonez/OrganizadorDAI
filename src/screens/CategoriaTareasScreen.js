@@ -1,21 +1,21 @@
 import React from 'react';
 import { View, Text, FlatList, StyleSheet, TouchableOpacity, Alert } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
-import { useTasks } from '../context/TaskContext';
+import { useTasks } from '../context/ContextoTarea';
 
-const CategoryTasksScreen = ({ route, navigation }) => {
+const CategoriaTareasScreen = ({ route, navigation }) => {
   const { category } = route.params;
-  const { getTasksByCategory, deleteTask } = useTasks();
+  const { obtenerTareasPorCategoria, eliminarTarea } = useTasks();
 
-  const tasks = getTasksByCategory(category);
+  const tareas = obtenerTareasPorCategoria(category);
 
-  const confirmDelete = (id) => {
+  const confirmarEliminar = (id) => {
     Alert.alert(
       'Eliminar tarea',
       '¿Está seguro que desea eliminar esta tarea?',
       [
         { text: 'Cancelar', style: 'cancel' },
-        { text: 'Eliminar', onPress: () => deleteTask(id) },
+        { text: 'Eliminar', onPress: () => eliminarTarea(id) },
       ]
     );
   };
@@ -30,7 +30,7 @@ const CategoryTasksScreen = ({ route, navigation }) => {
           <Text style={styles.taskText}>{item.text}</Text>
           <Text style={styles.taskDate}>{item.date || 'Sin fecha'}</Text>
         </View>
-        <TouchableOpacity onPress={() => confirmDelete(item.id)} style={styles.deleteButton}>
+        <TouchableOpacity onPress={() => confirmarEliminar(item.id)} style={styles.deleteButton}>
           <Text style={styles.deleteButtonText}>X</Text>
         </TouchableOpacity>
       </LinearGradient>
@@ -39,14 +39,14 @@ const CategoryTasksScreen = ({ route, navigation }) => {
 
   return (
     <LinearGradient colors={['#FFF3E0', '#FFEB3B']} style={styles.container}>
-      <TouchableOpacity style={styles.addButton} onPress={() => navigation.navigate('AddTask', { category })}>
+      <TouchableOpacity style={styles.addButton} onPress={() => navigation.navigate('AgregarTarea', { category })}>
         <LinearGradient colors={['#4CAF50', '#45a049']} style={styles.addButtonGradient}>
           <Text style={styles.addButtonText}>+ Agregar Tarea</Text>
         </LinearGradient>
       </TouchableOpacity>
       <Text style={styles.title}>{category}</Text>
       <FlatList
-        data={tasks}
+        data={tareas}
         keyExtractor={(item) => item.id}
         renderItem={renderTask}
         ListEmptyComponent={<Text style={styles.emptyText}>No hay tareas en esta categoría</Text>}
@@ -106,4 +106,4 @@ const styles = StyleSheet.create({
   emptyText: { textAlign: 'center', marginTop: 20, color: '#666', fontSize: 16 },
 });
 
-export default CategoryTasksScreen;
+export default CategoriaTareasScreen;

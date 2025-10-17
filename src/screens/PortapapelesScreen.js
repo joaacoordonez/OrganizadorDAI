@@ -3,10 +3,10 @@ import { View, Text, TextInput, TouchableOpacity, StyleSheet, Alert } from 'reac
 import { LinearGradient } from 'expo-linear-gradient';
 import * as Clipboard from 'expo-clipboard';
 
-const ClipboardScreen = () => {
+const PortapapelesScreen = () => {
   const [text, setText] = useState('');
 
-  const copyToClipboard = async () => {
+  const copiarAlPortapapeles = async () => {
     if (!text.trim()) {
       Alert.alert('Error', 'Por favor ingrese texto para copiar.');
       return;
@@ -15,10 +15,10 @@ const ClipboardScreen = () => {
     Alert.alert('Copiado', 'Texto copiado al portapapeles.');
   };
 
-  const pasteFromClipboard = async () => {
-    const clipboardContent = await Clipboard.getStringAsync();
-    const textoanterior = text
-    setText(textoanterior + clipboardContent);
+  const pegarDesdePortapapeles = async () => {
+    const contenidoPortapapeles = await Clipboard.getStringAsync();
+    const textoAnterior = text;
+    setText(textoAnterior + contenidoPortapapeles);
     Alert.alert('Pegado', 'Texto pegado desde el portapapeles.');
   };
 
@@ -36,12 +36,12 @@ const ClipboardScreen = () => {
         placeholderTextColor="#666"
       />
       <View style={styles.buttonRow}>
-        <TouchableOpacity style={styles.copyButton} onPress={copyToClipboard}>
+        <TouchableOpacity style={styles.copyButton} onPress={copiarAlPortapapeles}>
           <LinearGradient colors={['#FF9800', '#F57C00']} style={styles.buttonGradient}>
             <Text style={styles.buttonText}>Copiar</Text>
           </LinearGradient>
         </TouchableOpacity>
-        <TouchableOpacity style={styles.pasteButton} onPress={pasteFromClipboard}>
+        <TouchableOpacity style={styles.pasteButton} onPress={pegarDesdePortapapeles}>
           <LinearGradient colors={['#2196F3', '#1976D2']} style={styles.buttonGradient}>
             <Text style={styles.buttonText}>Pegar</Text>
           </LinearGradient>
@@ -99,4 +99,4 @@ const styles = StyleSheet.create({
   buttonText: { color: '#fff', fontSize: 16, fontWeight: 'bold' },
 });
 
-export default ClipboardScreen;
+export default PortapapelesScreen;

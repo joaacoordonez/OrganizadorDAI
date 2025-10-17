@@ -1,30 +1,30 @@
 import React, { useState } from 'react';
 import { View, Text, TextInput, TouchableOpacity, StyleSheet, Alert, Modal } from 'react-native';
-import { Calendar } from 'react-native-calendars';
-import { LinearGradient } from 'expo-linear-gradient';
-import { useTasks } from '../context/TaskContext';
+import { Calendar } from 'react-native-calendars'; 
+import { LinearGradient } from 'expo-linear-gradient'; 
+import { useTasks } from '../context/ContextoTarea'; 
 
-const AddTaskScreen = ({ navigation, route }) => {
-  const { category: initialCategory } = route.params || {};
-  const [text, setText] = useState('');
-  const [category, setCategory] = useState(initialCategory || 'Examenes');
-  const [date, setDate] = useState('');
-  const [calendarVisible, setCalendarVisible] = useState(false);
-  const { addTask } = useTasks();
+const AgregarTareaScreen = ({ navigation, route }) => {
+  const { category: categoriaInicial } = route.params || {}; 
+  const [texto, setTexto] = useState(''); 
+  const [categoria, setCategoria] = useState(categoriaInicial || 'Examenes'); 
+  const [fecha, setFecha] = useState(''); 
+  const [calendarioVisible, setCalendarioVisible] = useState(false); 
+  const { agregarTarea } = useTasks(); 
 
-  const handleAddTask = () => {
-    if (!text.trim()) {
+  const manejarAgregarTarea = () => {
+    if (!texto.trim()) {
       Alert.alert('Error', 'Por favor ingrese el texto de la tarea.');
       return;
     }
-    addTask(text, date, category);
+    agregarTarea(texto, fecha, categoria);
     Alert.alert('Tarea agregada', 'La tarea ha sido agregada exitosamente.');
     navigation.goBack();
   };
 
   const onDayPress = (day) => {
-    setDate(day.dateString);
-    setCalendarVisible(false);
+    setFecha(day.dateString);
+    setCalendarioVisible(false);
   };
 
   return (
@@ -33,18 +33,18 @@ const AddTaskScreen = ({ navigation, route }) => {
       <TextInput
         style={styles.input}
         placeholder="Texto de la tarea"
-        value={text}
-        onChangeText={setText}
+        value={texto}
+        onChangeText={setTexto}
         placeholderTextColor="#666"
       />
-      <Text style={styles.label}>Categoría: {category}</Text>
+      <Text style={styles.label}>Categoría: {categoria}</Text>
       <Text style={styles.label}>Fecha:</Text>
-      <TouchableOpacity style={styles.dateButton} onPress={() => setCalendarVisible(true)}>
+      <TouchableOpacity style={styles.dateButton} onPress={() => setCalendarioVisible(true)}>
         <Text style={styles.dateButtonText}>
-          {date ? date : 'Seleccionar fecha'}
+          {fecha ? fecha : 'Seleccionar fecha'}
         </Text>
       </TouchableOpacity>
-      <TouchableOpacity style={styles.addButton} onPress={handleAddTask}>
+      <TouchableOpacity style={styles.addButton} onPress={manejarAgregarTarea}>
         <LinearGradient colors={['#FF5722', '#E64A19']} style={styles.addButtonGradient}>
           <Text style={styles.addButtonText}>Agregar Tarea</Text>
         </LinearGradient>
@@ -53,22 +53,22 @@ const AddTaskScreen = ({ navigation, route }) => {
       <Modal
         animationType="slide"
         transparent={true}
-        visible={calendarVisible}
-        onRequestClose={() => setCalendarVisible(false)}
+        visible={calendarioVisible}
+        onRequestClose={() => setCalendarioVisible(false)}
       >
         <View style={styles.modalOverlay}>
           <View style={styles.modalContent}>
             <Text style={styles.modalTitle}>Seleccionar Fecha</Text>
             <Calendar
               onDayPress={onDayPress}
-              markedDates={date ? { [date]: { selected: true, selectedColor: '#FF5722' } } : {}}
+              markedDates={fecha ? { [fecha]: { selected: true, selectedColor: '#FF5722' } } : {}}
               theme={{
                 selectedDayBackgroundColor: '#FF5722',
                 todayTextColor: '#FF5722',
                 arrowColor: '#FF5722',
               }}
             />
-            <TouchableOpacity style={styles.closeButton} onPress={() => setCalendarVisible(false)}>
+            <TouchableOpacity style={styles.closeButton} onPress={() => setCalendarioVisible(false)}>
               <Text style={styles.closeButtonText}>Cerrar</Text>
             </TouchableOpacity>
           </View>
@@ -156,4 +156,4 @@ const styles = StyleSheet.create({
   closeButtonText: { color: '#fff', fontWeight: 'bold' },
 });
 
-export default AddTaskScreen;
+export default AgregarTareaScreen;

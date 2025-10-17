@@ -13,84 +13,87 @@ Notifications.setNotificationHandler({
   }),
 });
 
-const NotificationsScreen = () => {
-  const [expoPushToken, setExpoPushToken] = useState('');
-  const [notification, setNotification] = useState(false);
-  const [message, setMessage] = useState('');
-  const [date, setDate] = useState('');
-  const [time, setTime] = useState('');
-  const [recurrence, setRecurrence] = useState('none');
-  const [calendarVisible, setCalendarVisible] = useState(false);
-  const [timePickerVisible, setTimePickerVisible] = useState(false);
-  const [recurrencePickerVisible, setRecurrencePickerVisible] = useState(false);
+const NotificacionesScreen = () => {
+  const [tokenPushExpo, setTokenPushExpo] = useState('');
+  const [notificacion, setNotificacion] = useState(false);
+  const [mensaje, setMensaje] = useState('');
+  const [fecha, setFecha] = useState('');
+  const [horaSeleccionada, setHoraSeleccionada] = useState('');
+  const [minutoSeleccionado, setMinutoSeleccionado] = useState('');
+  const hora = horaSeleccionada && minutoSeleccionado ? `${horaSeleccionada}:${minutoSeleccionado}` : '';
+  const [recurrencia, setRecurrencia] = useState('none');
+  const [calendarioVisible, setCalendarioVisible] = useState(false);
+  const [selectorHoraVisible, setSelectorHoraVisible] = useState(false);
+  const [selectorRecurrenciaVisible, setSelectorRecurrenciaVisible] = useState(false);
 
   useEffect(() => {
-    registerForPushNotificationsAsync().then(token => setExpoPushToken(token));
+    registerForPushNotificationsAsync().then(token => setTokenPushExpo(token));
 
-    const subscription = Notifications.addNotificationReceivedListener(notification => {
-      setNotification(notification);
+    const subscription = Notifications.addNotificationReceivedListener(notificacion => {
+      setNotificacion(notificacion);
     });
 
     return () => subscription.remove();
   }, []);
 
-  const scheduleNotification = async () => {
-    if (!message.trim()) {
+  const programarNotificacion = async () => {
+    if (!mensaje.trim()) {
       Alert.alert('Error', 'Por favor ingrese un mensaje para la notificación.');
       return;
     }
-    if (!date || !time) {
+    if (!fecha || !hora) {
       Alert.alert('Error', 'Por favor seleccione fecha y hora.');
       return;
     }
 
-    const [hours, minutes] = time.split(':').map(Number);
-    const triggerDate = new Date(date);
-    triggerDate.setHours(hours, minutes, 0, 0);
+    const fechaActivacion = new Date(`${fecha}T${hora}:00`);
 
-    const now = new Date();
-    if (recurrence === 'none' && triggerDate <= now) {
+    const ahora = new Date();
+    if (recurrencia === 'none' && fechaActivacion <= ahora) {
       Alert.alert('Error', 'La fecha y hora deben ser en el futuro.');
       return;
     }
 
-    let trigger;
-    if (recurrence === 'daily') {
-      trigger = {
-        hour: hours,
-        minute: minutes,
+    let activador;
+    if (recurrencia === 'daily') {
+      const [horas, minutos] = hora.split(':').map(Number);
+      activador = {
+        hour: horas,
+        minute: minutos,
         repeats: true,
       };
-    } else if (recurrence === 'weekly') {
-      trigger = {
-        weekday: triggerDate.getDay() + 1, // 1 = Sunday, 7 = Saturday
-        hour: hours,
-        minute: minutes,
+    } else if (recurrencia === 'weekly') {
+      const [horas, minutos] = hora.split(':').map(Number);
+      activador = {
+        weekday: fechaActivacion.getDay() + 1, // 1 = es el sabado, 7 = es el domingo
+        hour: horas,
+        minute: minutos,
         repeats: true,
       };
     } else {
-      trigger = triggerDate;
+      activador = fechaActivacion;
     }
 
     await Notifications.scheduleNotificationAsync({
       content: {
         title: "Recordatorio",
-        body: message,
+        body: mensaje,
       },
-      trigger,
+      trigger: activador,
     });
 
-    const recurrenceText = recurrence === 'none' ? '' : ` (${recurrence})`;
-    Alert.alert('Notificación programada', `Se enviará el ${date} a las ${time}${recurrenceText}.`);
-    setMessage('');
-    setDate('');
-    setTime('');
-    setRecurrence('none');
+    const textoRecurrencia = recurrencia === 'none' ? '' : ` (${recurrencia})`;
+    Alert.alert('Notificación programada', `Se enviará el ${fecha} a las ${hora}${textoRecurrencia}.`);
+    setMensaje('');
+    setFecha('');
+    setHoraSeleccionada('');
+    setMinutoSeleccionado('');
+    setRecurrencia('none');
   };
 
-  const onDayPress = (day) => {
-    setDate(day.dateString);
-    setCalendarVisible(false);
+  const alPresionarDia = (dia) => {
+    setFecha(dia.dateString);
+    setCalendarioVisible(false);
   };
 
   return (
@@ -102,38 +105,53 @@ const NotificationsScreen = () => {
         <TextInput
           style={styles.input}
           placeholder="Mensaje del recordatorio"
-          value={message}
-          onChangeText={setMessage}
+          value={mensaje}
+          onChangeText={setMensaje}
           placeholderTextColor="#666"
         />
 
         <Text style={styles.label}>Fecha:</Text>
-        <TouchableOpacity style={styles.dateButton} onPress={() => setCalendarVisible(true)}>
+        <TouchableOpacity style={styles.dateButton} onPress={() => setCalendarioVisible(true)}>
           <Text style={styles.dateButtonText}>
-            {date ? date : 'Seleccionar fecha'}
+            {fecha ? fecha : 'Seleccionar fecha'}
           </Text>
         </TouchableOpacity>
 
         <Text style={styles.label}>Hora:</Text>
-        <View style={styles.pickerContainer}>
-          <Picker
-            selectedValue={time}
-            onValueChange={(itemValue) => setTime(itemValue)}
-            style={styles.picker}
-          >
-            <Picker.Item label="Seleccionar hora" value="" />
-            {Array.from({ length: 24 }, (_, i) => {
-              const hour = i.toString().padStart(2, '0');
-              return <Picker.Item key={hour} label={`${hour}:00`} value={`${hour}:00`} />;
-            })}
-          </Picker>
+        <View style={styles.timePickerContainer}>
+          <View style={styles.pickerWrapper}>
+            <Picker
+              selectedValue={horaSeleccionada}
+              onValueChange={(itemValue) => setHoraSeleccionada(itemValue)}
+              style={styles.picker}
+            >
+              <Picker.Item label="Hora" value="" />
+              {Array.from({ length: 24 }, (_, h) => {
+                const hour = h.toString().padStart(2, '0');
+                return <Picker.Item key={hour} label={hour} value={hour} />;
+              })}
+            </Picker>
+          </View>
+          <View style={styles.pickerWrapper}>
+            <Picker
+              selectedValue={minutoSeleccionado}
+              onValueChange={(itemValue) => setMinutoSeleccionado(itemValue)}
+              style={styles.picker}
+            >
+              <Picker.Item label="Min" value="" />
+              {Array.from({ length: 60 }, (_, m) => {
+                const minute = m.toString().padStart(2, '0');
+                return <Picker.Item key={minute} label={minute} value={minute} />;
+              })}
+            </Picker>
+          </View>
         </View>
 
         <Text style={styles.label}>Repetición:</Text>
         <View style={styles.pickerContainer}>
           <Picker
-            selectedValue={recurrence}
-            onValueChange={(itemValue) => setRecurrence(itemValue)}
+            selectedValue={recurrencia}
+            onValueChange={(itemValue) => setRecurrencia(itemValue)}
             style={styles.picker}
           >
             <Picker.Item label="Una vez" value="none" />
@@ -142,39 +160,39 @@ const NotificationsScreen = () => {
           </Picker>
         </View>
 
-        <TouchableOpacity style={styles.scheduleButton} onPress={scheduleNotification}>
+        <TouchableOpacity style={styles.scheduleButton} onPress={programarNotificacion}>
           <LinearGradient colors={['#2196F3', '#1976D2']} style={styles.scheduleButtonGradient}>
             <Text style={styles.scheduleButtonText}>Programar Recordatorio</Text>
           </LinearGradient>
         </TouchableOpacity>
 
-        {notification ? (
+        {notificacion ? (
           <View style={styles.notification}>
             <Text style={styles.notificationTitle}>Última notificación recibida:</Text>
-            <Text style={styles.notificationBody}>{notification.request.content.title}</Text>
-            <Text style={styles.notificationBody}>{notification.request.content.body}</Text>
+            <Text style={styles.notificationBody}>{notificacion.request.content.title}</Text>
+            <Text style={styles.notificationBody}>{notificacion.request.content.body}</Text>
           </View>
         ) : null}
 
         <Modal
           animationType="slide"
           transparent={true}
-          visible={calendarVisible}
-          onRequestClose={() => setCalendarVisible(false)}
+          visible={calendarioVisible}
+          onRequestClose={() => setCalendarioVisible(false)}
         >
           <View style={styles.modalOverlay}>
             <View style={styles.modalContent}>
               <Text style={styles.modalTitle}>Seleccionar Fecha</Text>
               <Calendar
-                onDayPress={onDayPress}
-                markedDates={date ? { [date]: { selected: true, selectedColor: '#2196F3' } } : {}}
+                onDayPress={alPresionarDia}
+                markedDates={fecha ? { [fecha]: { selected: true, selectedColor: '#2196F3' } } : {}}
                 theme={{
                   selectedDayBackgroundColor: '#2196F3',
                   todayTextColor: '#2196F3',
                   arrowColor: '#2196F3',
                 }}
               />
-              <TouchableOpacity style={styles.closeButton} onPress={() => setCalendarVisible(false)}>
+              <TouchableOpacity style={styles.closeButton} onPress={() => setCalendarioVisible(false)}>
                 <Text style={styles.closeButtonText}>Cerrar</Text>
               </TouchableOpacity>
             </View>
@@ -262,6 +280,24 @@ const styles = StyleSheet.create({
     elevation: 3,
   },
   picker: { height: 50, width: '100%' },
+  timePickerContainer: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    marginBottom: 20,
+  },
+  pickerWrapper: {
+    flex: 1,
+    marginHorizontal: 5,
+    borderColor: '#2196F3',
+    borderWidth: 2,
+    borderRadius: 12,
+    backgroundColor: '#fff',
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+    elevation: 3,
+  },
   scheduleButton: {
     borderRadius: 12,
     overflow: 'hidden',
@@ -326,4 +362,4 @@ const styles = StyleSheet.create({
   optionText: { fontSize: 16, color: '#0D47A1' },
 });
 
-export default NotificationsScreen;
+export default NotificacionesScreen;

@@ -1,16 +1,15 @@
 import React from 'react';
-import { NavigationContainer } from '@react-navigation/native';
-import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
-import { createNativeStackNavigator } from '@react-navigation/native-stack';
-import { StatusBar } from 'expo-status-bar';
-import { LinearGradient } from 'expo-linear-gradient';
-import { TaskProvider } from './src/context/TaskContext';
+import { NavigationContainer } from '@react-navigation/native'; 
+import { createBottomTabNavigator } from '@react-navigation/bottom-tabs'; 
+import { createNativeStackNavigator } from '@react-navigation/native-stack'; 
+import { StatusBar } from 'expo-status-bar'; 
+import { TaskProvider } from './src/context/ContextoTarea'; 
 import MisListasScreen from './src/screens/MisListasScreen';
-import CategoryTasksScreen from './src/screens/CategoryTasksScreen';
-import AddTaskScreen from './src/screens/AddTaskScreen';
-import CalendarScreen from './src/screens/CalendarScreen';
-import NotificationsScreen from './src/screens/NotificationsScreen';
-import ClipboardScreen from './src/screens/ClipboardScreen';
+import CategoriaTareasScreen from './src/screens/CategoriaTareasScreen'; 
+import AgregarTareaScreen from './src/screens/AgregarTareaScreen';
+import CalendarioScreen from './src/screens/CalendarioScreen'; 
+import NotificationsScreen from './src/screens/NotificationesScreen'; 
+import PortapapelesScreen from './src/screens/PortapapelesScreen';
 
 const Tab = createBottomTabNavigator();
 const Stack = createNativeStackNavigator();
@@ -24,8 +23,8 @@ const MisListasStack = () => (
     }}
   >
     <Stack.Screen name="MisListas" component={MisListasScreen} options={{ title: 'Mis Listas' }} />
-    <Stack.Screen name="CategoryTasks" component={CategoryTasksScreen} options={{ title: 'Tareas' }} />
-    <Stack.Screen name="AddTask" component={AddTaskScreen} options={{ title: 'Agregar Tarea' }} />
+    <Stack.Screen name="CategoriaTareasScreen" component={CategoriaTareasScreen} options={{ title: 'Tareas' }} />
+    <Stack.Screen name="AgregarTarea" component={AgregarTareaScreen} options={{ title: 'Agregar Tarea' }} />
   </Stack.Navigator>
 );
 
@@ -59,7 +58,7 @@ export default function App() {
           />
           <Tab.Screen
             name="Calendario"
-            component={CalendarScreen}
+            component={CalendarioScreen}
             options={{ title: 'Calendario' }}
           />
           <Tab.Screen
@@ -69,7 +68,7 @@ export default function App() {
           />
           <Tab.Screen
             name="Portapapeles"
-            component={ClipboardScreen}
+            component={PortapapelesScreen}
             options={{ title: 'Portapapeles' }}
           />
         </Tab.Navigator>

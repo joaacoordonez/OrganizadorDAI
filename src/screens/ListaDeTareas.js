@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { View, Text, FlatList, TextInput, Button, StyleSheet, TouchableOpacity } from 'react-native';
 
-const TaskList = () => {
+const ListaDeTareas = () => {
   const [tasks, setTasks] = useState([]);
   const [input, setInput] = useState('');
 
@@ -70,4 +70,4 @@ const styles = StyleSheet.create({
   emptyText: { textAlign: 'center', marginTop: 20, color: '#999' },
 });
 
-export default TaskList;
+export default ListaDeTareas;
