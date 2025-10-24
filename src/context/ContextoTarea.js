@@ -1,47 +1,47 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
-import AsyncStorage from '@react-native-async-storage/async-storage'; // Almacenamiento persistente en dispositivo
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
-const TaskContext = createContext(); // Contexto para compartir estado entre componentes
+const TaskContext = createContext();
 
-export const useTasks = () => useContext(TaskContext); // Hook personalizado para acceder al contexto
+export const useTasks = () => useContext(TaskContext);
 
 export const TaskProvider = ({ children }) => {
-  const [tareas, setTareas] = useState([]); // Estado de todas las tareas
-  const [categorias, setCategorias] = useState(['Examenes', 'Compras', 'ToDo']); // Estado de categorías disponibles
+  const [tareas, setTareas] = useState([]); // Lista de todas las tareas
+  const [categorias, setCategorias] = useState(['Examenes', 'Compras', 'ToDo']); // Categorías disponibles
 
+ 
+  // Cargar datos guardados al iniciar
   useEffect(() => {
     cargarTareas();
     cargarCategorias();
   }, []);
 
+  // cargar lo que agregue
   const cargarTareas = async () => {
     try {
       const tareasGuardadas = await AsyncStorage.getItem('tasks');
-      if (tareasGuardadas) {
-        setTareas(JSON.parse(tareasGuardadas));
-      }
+      if (tareasGuardadas) setTareas(JSON.parse(tareasGuardadas));
     } catch (error) {
-      console.error('Error cargando tareas:', error);
+      console.error('Error al cargar las tareas:', error);
     }
   };
 
   const cargarCategorias = async () => {
     try {
       const categoriasGuardadas = await AsyncStorage.getItem('categories');
-      if (categoriasGuardadas) {
-        setCategorias(JSON.parse(categoriasGuardadas));
-      }
+      if (categoriasGuardadas) setCategorias(JSON.parse(categoriasGuardadas));
     } catch (error) {
-      console.error('Error cargando categorias:', error);
+      console.error('Error al cargar las categorías:', error);
     }
   };
 
+  // --- para guardar
   const guardarTareas = async (nuevasTareas) => {
     try {
       await AsyncStorage.setItem('tasks', JSON.stringify(nuevasTareas));
       setTareas(nuevasTareas);
     } catch (error) {
-      console.error('Error guardando tareas:', error);
+      console.error('Error al guardar las tareas:', error);
     }
   };
 
@@ -50,10 +50,11 @@ export const TaskProvider = ({ children }) => {
       await AsyncStorage.setItem('categories', JSON.stringify(nuevasCategorias));
       setCategorias(nuevasCategorias);
     } catch (error) {
-      console.error('Error guardando categorias:', error);
+      console.error('Error al guardar las categorías:', error);
     }
   };
 
+  // funciones de tareas
   const agregarTarea = (texto, fecha, categoria) => {
     const nuevaTarea = {
       id: Date.now().toString(),
@@ -61,15 +62,17 @@ export const TaskProvider = ({ children }) => {
       date: fecha,
       category: categoria,
     };
+
     const nuevasTareas = [...tareas, nuevaTarea];
     guardarTareas(nuevasTareas);
   };
 
   const eliminarTarea = (id) => {
-    const nuevasTareas = tareas.filter(tarea => tarea.id !== id);
+    const nuevasTareas = tareas.filter((tarea) => tarea.id !== id);
     guardarTareas(nuevasTareas);
   };
 
+  // funciones de categorias
   const agregarCategoria = (nuevaCategoria) => {
     if (!categorias.includes(nuevaCategoria)) {
       const nuevasCategorias = [...categorias, nuevaCategoria];
@@ -78,43 +81,49 @@ export const TaskProvider = ({ children }) => {
   };
 
   const eliminarCategoria = (categoriaAEliminar) => {
-    const nuevasCategorias = categorias.filter(cat => cat !== categoriaAEliminar);
+    // Eliminar la categoría
+    const nuevasCategorias = categorias.filter((cat) => cat !== categoriaAEliminar);
     guardarCategorias(nuevasCategorias);
-    // Also delete all tasks in this category
-    const nuevasTareas = tareas.filter(tarea => tarea.category !== categoriaAEliminar);
+
+    // Eliminar también las tareas de esa categoría
+    const nuevasTareas = tareas.filter((tarea) => tarea.category !== categoriaAEliminar);
     guardarTareas(nuevasTareas);
   };
 
-  const obtenerTareasPorCategoria = (categoria) => {
-    return tareas.filter(tarea => tarea.category === categoria);
-  };
+  // funciones para consultar
+  const obtenerTareasPorCategoria = (categoria) =>
+    tareas.filter((tarea) => tarea.category === categoria);
 
-  const obtenerTareasPorFecha = (fecha) => {
-    return tareas.filter(tarea => tarea.date === fecha);
-  };
+  const obtenerTareasPorFecha = (fecha) =>
+    tareas.filter((tarea) => tarea.date === fecha);
 
   const obtenerFechasMarcadas = () => {
     const marcadas = {};
-    tareas.forEach(tarea => {
+
+    tareas.forEach((tarea) => {
       if (tarea.date) {
         marcadas[tarea.date] = { marked: true, selectedColor: '#00adf5' };
       }
     });
+
     return marcadas;
   };
 
+  // los datos y funciones
   return (
-    <TaskContext.Provider value={{
-      tareas,
-      categorias,
-      agregarTarea,
-      eliminarTarea,
-      agregarCategoria,
-      eliminarCategoria,
-      obtenerTareasPorCategoria,
-      obtenerTareasPorFecha,
-      obtenerFechasMarcadas,
-    }}>
+    <TaskContext.Provider
+      value={{
+        tareas,
+        categorias,
+        agregarTarea,
+        eliminarTarea,
+        agregarCategoria,
+        eliminarCategoria,
+        obtenerTareasPorCategoria,
+        obtenerTareasPorFecha,
+        obtenerFechasMarcadas,
+      }}
+    >
       {children}
     </TaskContext.Provider>
   );

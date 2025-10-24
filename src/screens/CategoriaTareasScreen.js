@@ -1,14 +1,25 @@
 import React from 'react';
-import { View, Text, FlatList, StyleSheet, TouchableOpacity, Alert } from 'react-native';
+import {
+  View,
+  Text,
+  FlatList,
+  StyleSheet,
+  TouchableOpacity,
+  Alert,
+} from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { useTasks } from '../context/ContextoTarea';
 
 const CategoriaTareasScreen = ({ route, navigation }) => {
+
   const { category } = route.params;
+
   const { obtenerTareasPorCategoria, eliminarTarea } = useTasks();
 
+  // lista de tatreas segun su categoria
   const tareas = obtenerTareasPorCategoria(category);
 
+  // confirmar eliminacion de la tarea
   const confirmarEliminar = (id) => {
     Alert.alert(
       'Eliminar tarea',
@@ -20,17 +31,24 @@ const CategoriaTareasScreen = ({ route, navigation }) => {
     );
   };
 
+  // renderizar las tareas
   const renderTask = ({ item }) => (
     <View style={styles.taskItem}>
       <LinearGradient
         colors={['#FFF9C4', '#FFF59D']}
         style={styles.taskGradient}
       >
+        {/* Contenido de la tarea */}
         <View style={styles.taskContent}>
           <Text style={styles.taskText}>{item.text}</Text>
           <Text style={styles.taskDate}>{item.date || 'Sin fecha'}</Text>
         </View>
-        <TouchableOpacity onPress={() => confirmarEliminar(item.id)} style={styles.deleteButton}>
+
+        {/* Botón para eliminar la tarea */}
+        <TouchableOpacity
+          onPress={() => confirmarEliminar(item.id)}
+          style={styles.deleteButton}
+        >
           <Text style={styles.deleteButtonText}>X</Text>
         </TouchableOpacity>
       </LinearGradient>
@@ -39,24 +57,45 @@ const CategoriaTareasScreen = ({ route, navigation }) => {
 
   return (
     <LinearGradient colors={['#FFF3E0', '#FFEB3B']} style={styles.container}>
-      <TouchableOpacity style={styles.addButton} onPress={() => navigation.navigate('AgregarTarea', { category })}>
-        <LinearGradient colors={['#4CAF50', '#45a049']} style={styles.addButtonGradient}>
+      
+      {/* Boton para agregar tarea */}
+      <TouchableOpacity
+        style={styles.addButton}
+        onPress={() => navigation.navigate('AgregarTarea', { category })}
+      >
+        <LinearGradient
+          colors={['#4CAF50', '#45a049']}
+          style={styles.addButtonGradient}
+        >
           <Text style={styles.addButtonText}>+ Agregar Tarea</Text>
         </LinearGradient>
       </TouchableOpacity>
+
+      {/* Titulo de la categoria */}
       <Text style={styles.title}>{category}</Text>
+
+      {/* Lista de tareas */}
       <FlatList
         data={tareas}
         keyExtractor={(item) => item.id}
         renderItem={renderTask}
-        ListEmptyComponent={<Text style={styles.emptyText}>No hay tareas en esta categoría</Text>}
+        ListEmptyComponent={
+          <Text style={styles.emptyText}>
+            No hay tareas en esta categoría
+          </Text>
+        }
       />
     </LinearGradient>
   );
 };
 
 const styles = StyleSheet.create({
-  container: { flex: 1, padding: 16 },
+  container: {
+    flex: 1,
+    padding: 16,
+  },
+
+  //Botón para agregar tarea
   addButton: {
     borderRadius: 12,
     overflow: 'hidden',
@@ -71,8 +110,22 @@ const styles = StyleSheet.create({
     padding: 12,
     alignItems: 'center',
   },
-  addButtonText: { color: '#fff', fontSize: 16, fontWeight: 'bold' },
-  title: { fontSize: 28, fontWeight: 'bold', marginBottom: 16, color: '#E65100', textAlign: 'center' },
+  addButtonText: {
+    color: '#fff',
+    fontSize: 16,
+    fontWeight: 'bold',
+  },
+
+  // Título principal
+  title: {
+    fontSize: 28,
+    fontWeight: 'bold',
+    marginBottom: 16,
+    color: '#E65100',
+    textAlign: 'center',
+  },
+
+  //Estilos de las tareas
   taskItem: {
     marginBottom: 12,
     borderRadius: 12,
@@ -89,8 +142,18 @@ const styles = StyleSheet.create({
     padding: 16,
   },
   taskContent: { flex: 1 },
-  taskText: { fontSize: 18, color: '#333', fontWeight: 'bold' },
-  taskDate: { fontSize: 14, color: '#666', marginTop: 4 },
+  taskText: {
+    fontSize: 18,
+    color: '#333',
+    fontWeight: 'bold',
+  },
+  taskDate: {
+    fontSize: 14,
+    color: '#666',
+    marginTop: 4,
+  },
+
+  // Botón de eliminar
   deleteButton: {
     backgroundColor: '#F44336',
     borderRadius: 8,
@@ -102,8 +165,19 @@ const styles = StyleSheet.create({
     shadowRadius: 4,
     elevation: 4,
   },
-  deleteButtonText: { color: 'white', fontWeight: 'bold', fontSize: 16 },
-  emptyText: { textAlign: 'center', marginTop: 20, color: '#666', fontSize: 16 },
+  deleteButtonText: {
+    color: 'white',
+    fontWeight: 'bold',
+    fontSize: 16,
+  },
+
+  //Texto cuando no hay tareas 
+  emptyText: {
+    textAlign: 'center',
+    marginTop: 20,
+    color: '#666',
+    fontSize: 16,
+  },
 });
 
 export default CategoriaTareasScreen;
