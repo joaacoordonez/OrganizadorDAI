@@ -5,27 +5,33 @@ import { Calendar } from 'react-native-calendars';
 import { LinearGradient } from 'expo-linear-gradient';
 import * as Notifications from 'expo-notifications';
 
+// Configuración global para las notificaciones
 Notifications.setNotificationHandler({
   handleNotification: async () => ({
-    shouldShowAlert: true,
-    shouldPlaySound: true,
-    shouldSetBadge: false,
+    shouldShowAlert: true, // Mostrar alerta al usuario
+    shouldPlaySound: true, // Reproducir sonido
+    shouldSetBadge: false, // No cambiar el icono de la app
   }),
 });
 
 const NotificacionesScreen = () => {
-  const [tokenPushExpo, setTokenPushExpo] = useState('');
-  const [notificacion, setNotificacion] = useState(false);
-  const [mensaje, setMensaje] = useState('');
-  const [fecha, setFecha] = useState('');
-  const [horaSeleccionada, setHoraSeleccionada] = useState('');
-  const [minutoSeleccionado, setMinutoSeleccionado] = useState('');
-  const hora = horaSeleccionada && minutoSeleccionado ? `${horaSeleccionada}:${minutoSeleccionado}` : '';
-  const [recurrencia, setRecurrencia] = useState('none');
-  const [calendarioVisible, setCalendarioVisible] = useState(false);
-  const [selectorHoraVisible, setSelectorHoraVisible] = useState(false);
-  const [selectorRecurrenciaVisible, setSelectorRecurrenciaVisible] = useState(false);
+  const [tokenPushExpo, setTokenPushExpo] = useState(''); 
+  const [notificacion, setNotificacion] = useState(null); 
+  const [mensaje, setMensaje] = useState(''); 
+  const [fecha, setFecha] = useState(''); 
+  const [horaSeleccionada, setHoraSeleccionada] = useState(''); 
+  const [minutoSeleccionado, setMinutoSeleccionado] = useState(''); 
+  const [recurrencia, setRecurrencia] = useState('none'); 
+  
+  // Modal y mostrar las cosas
+  const [calendarioVisible, setCalendarioVisible] = useState(false); 
+  const [selectorHoraVisible, setSelectorHoraVisible] = useState(false); 
+  const [selectorRecurrenciaVisible, setSelectorRecurrenciaVisible] = useState(false); 
 
+  // poner la hora y minutos
+  const hora = horaSeleccionada && minutoSeleccionado ? `${horaSeleccionada}:${minutoSeleccionado}` : '';
+
+  // Registrar la notificación cuando el componente se monta
   useEffect(() => {
     registerForPushNotificationsAsync().then(token => setTokenPushExpo(token));
 
@@ -36,17 +42,19 @@ const NotificacionesScreen = () => {
     return () => subscription.remove();
   }, []);
 
+  // Función para programar la notificación
   const programarNotificacion = async () => {
     if (!mensaje.trim()) {
       Alert.alert('Error', 'Por favor ingrese un mensaje para la notificación.');
       return;
     }
+
     if (!fecha || !hora) {
       Alert.alert('Error', 'Por favor seleccione fecha y hora.');
       return;
     }
 
-    const fechaActivacion = new Date(`${fecha}T${hora}:00`);
+    const fechaActivacion = new Date(`${fecha}T${hora}:00`); // convertir a date
 
     const ahora = new Date();
     if (recurrencia === 'none' && fechaActivacion <= ahora) {
@@ -55,35 +63,40 @@ const NotificacionesScreen = () => {
     }
 
     let activador;
+
+    // Configuración para activador de la notificación segun cada cuanto queres
     if (recurrencia === 'daily') {
       const [horas, minutos] = hora.split(':').map(Number);
       activador = {
         hour: horas,
         minute: minutos,
-        repeats: true,
+        repeats: true, // Notificación repetida diariamente
       };
     } else if (recurrencia === 'weekly') {
       const [horas, minutos] = hora.split(':').map(Number);
       activador = {
-        weekday: fechaActivacion.getDay() + 1, // 1 = es el sabado, 7 = es el domingo
+        weekday: fechaActivacion.getDay() + 1, // Día de la semana, 1 es lunes, 7 es domingo
         hour: horas,
         minute: minutos,
-        repeats: true,
+        repeats: true, // por semana
       };
     } else {
-      activador = fechaActivacion;
+      activador = fechaActivacion; // una sola vez
     }
 
+    // Poner la notificación
     await Notifications.scheduleNotificationAsync({
       content: {
         title: "Recordatorio",
-        body: mensaje,
+        body: mensaje, 
       },
-      trigger: activador,
+      trigger: activador, // Activador segun fecha, hora y cada cuanto
     });
 
+    // Mostrar mensaje de confirmación
     const textoRecurrencia = recurrencia === 'none' ? '' : ` (${recurrencia})`;
     Alert.alert('Notificación programada', `Se enviará el ${fecha} a las ${hora}${textoRecurrencia}.`);
+
     setMensaje('');
     setFecha('');
     setHoraSeleccionada('');
@@ -91,8 +104,9 @@ const NotificacionesScreen = () => {
     setRecurrencia('none');
   };
 
+  //fucion para elegir el dia
   const alPresionarDia = (dia) => {
-    setFecha(dia.dateString);
+    setFecha(dia.dateString); // Actualiza la fecha seleccionada
     setCalendarioVisible(false);
   };
 
@@ -122,7 +136,7 @@ const NotificacionesScreen = () => {
           <View style={styles.pickerWrapper}>
             <Picker
               selectedValue={horaSeleccionada}
-              onValueChange={(itemValue) => setHoraSeleccionada(itemValue)}
+              onValueChange={setHoraSeleccionada}
               style={styles.picker}
             >
               <Picker.Item label="Hora" value="" />
@@ -135,7 +149,7 @@ const NotificacionesScreen = () => {
           <View style={styles.pickerWrapper}>
             <Picker
               selectedValue={minutoSeleccionado}
-              onValueChange={(itemValue) => setMinutoSeleccionado(itemValue)}
+              onValueChange={setMinutoSeleccionado}
               style={styles.picker}
             >
               <Picker.Item label="Min" value="" />
@@ -147,11 +161,12 @@ const NotificacionesScreen = () => {
           </View>
         </View>
 
+        {/*elegir cada cuanto uno quiere que se repita */}
         <Text style={styles.label}>Repetición:</Text>
         <View style={styles.pickerContainer}>
           <Picker
             selectedValue={recurrencia}
-            onValueChange={(itemValue) => setRecurrencia(itemValue)}
+            onValueChange={setRecurrencia}
             style={styles.picker}
           >
             <Picker.Item label="Una vez" value="none" />
@@ -160,19 +175,20 @@ const NotificacionesScreen = () => {
           </Picker>
         </View>
 
+        {/* Botón para programar la notificación */}
         <TouchableOpacity style={styles.scheduleButton} onPress={programarNotificacion}>
           <LinearGradient colors={['#2196F3', '#1976D2']} style={styles.scheduleButtonGradient}>
             <Text style={styles.scheduleButtonText}>Programar Recordatorio</Text>
           </LinearGradient>
         </TouchableOpacity>
 
-        {notificacion ? (
+        {notificacion && (
           <View style={styles.notification}>
             <Text style={styles.notificationTitle}>Última notificación recibida:</Text>
             <Text style={styles.notificationBody}>{notificacion.request.content.title}</Text>
             <Text style={styles.notificationBody}>{notificacion.request.content.body}</Text>
           </View>
-        ) : null}
+        )}
 
         <Modal
           animationType="slide"
@@ -199,12 +215,12 @@ const NotificacionesScreen = () => {
           </View>
         </Modal>
 
-
       </ScrollView>
     </LinearGradient>
   );
 };
 
+// Funcion para registrar el dispositivo para recibir notificaciones
 async function registerForPushNotificationsAsync() {
   let token;
   if (Platform.OS === 'android') {
@@ -215,6 +231,7 @@ async function registerForPushNotificationsAsync() {
       lightColor: '#FF231F7C',
     });
   }
+
   const { status: existingStatus } = await Notifications.getPermissionsAsync();
   let finalStatus = existingStatus;
   if (existingStatus !== 'granted') {
@@ -225,6 +242,7 @@ async function registerForPushNotificationsAsync() {
     alert('No se pudo obtener permiso para notificaciones push!');
     return;
   }
+
   token = (await Notifications.getExpoPushTokenAsync()).data;
   return token;
 }
@@ -266,7 +284,6 @@ const styles = StyleSheet.create({
     elevation: 3,
   },
   dateButtonText: { fontSize: 16, color: '#0D47A1' },
-
   pickerContainer: {
     borderColor: '#2196F3',
     borderWidth: 2,
@@ -352,14 +369,6 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   closeButtonText: { color: '#fff', fontWeight: 'bold' },
-  optionButton: {
-    backgroundColor: '#f0f0f0',
-    padding: 12,
-    borderRadius: 8,
-    marginBottom: 10,
-    alignItems: 'center',
-  },
-  optionText: { fontSize: 16, color: '#0D47A1' },
 });
 
 export default NotificacionesScreen;

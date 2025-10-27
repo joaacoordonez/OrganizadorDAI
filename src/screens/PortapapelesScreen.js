@@ -6,20 +6,20 @@ import * as Clipboard from 'expo-clipboard';
 const PortapapelesScreen = () => {
   const [text, setText] = useState('');
 
+  // Función para copiar el texto al portapapeles
   const copiarAlPortapapeles = async () => {
-    if (!text.trim()) {
+    if (!text.trim()) { // ver si esta vacio
       Alert.alert('Error', 'Por favor ingrese texto para copiar.');
       return;
     }
-    await Clipboard.setStringAsync(text);
-    Alert.alert('Copiado', 'Texto copiado al portapapeles.');
+    await Clipboard.setStringAsync(text); // Copiar el texto al portapapeles
+    Alert.alert('Copiado', 'Texto copiado al portapapeles.'); 
   };
-
   const pegarDesdePortapapeles = async () => {
-    const contenidoPortapapeles = await Clipboard.getStringAsync();
-    const textoAnterior = text;
-    setText(textoAnterior + contenidoPortapapeles);
-    Alert.alert('Pegado', 'Texto pegado desde el portapapeles.');
+    const contenidoPortapapeles = await Clipboard.getStringAsync(); // Obtener texto desde el portapapeles
+    const textoAnterior = text; 
+    setText(textoAnterior + contenidoPortapapeles); // Agregar el texto del portapapeles al campo de texto
+    Alert.alert('Pegado', 'Texto pegado desde el portapapeles.'); 
   };
 
   return (
@@ -30,10 +30,10 @@ const PortapapelesScreen = () => {
         style={styles.input}
         placeholder="Escriba notas rápidas aquí"
         value={text}
-        onChangeText={setText}
-        multiline
-        numberOfLines={6}
-        placeholderTextColor="#666"
+        onChangeText={setText} 
+        multiline 
+        numberOfLines={6} 
+        placeholderTextColor="#666" 
       />
       <View style={styles.buttonRow}>
         <TouchableOpacity style={styles.copyButton} onPress={copiarAlPortapapeles}>
@@ -41,6 +41,7 @@ const PortapapelesScreen = () => {
             <Text style={styles.buttonText}>Copiar</Text>
           </LinearGradient>
         </TouchableOpacity>
+
         <TouchableOpacity style={styles.pasteButton} onPress={pegarDesdePortapapeles}>
           <LinearGradient colors={['#2196F3', '#1976D2']} style={styles.buttonGradient}>
             <Text style={styles.buttonText}>Pegar</Text>
@@ -50,7 +51,6 @@ const PortapapelesScreen = () => {
     </LinearGradient>
   );
 };
-
 const styles = StyleSheet.create({
   container: { flex: 1, padding: 16 },
   title: { fontSize: 28, fontWeight: 'bold', marginBottom: 8, textAlign: 'center', color: '#E65100' },
