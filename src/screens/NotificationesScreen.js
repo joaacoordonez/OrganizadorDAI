@@ -8,8 +8,8 @@ import * as Notifications from 'expo-notifications';
 // Configuración global para las notificaciones
 Notifications.setNotificationHandler({
   handleNotification: async () => ({
-    shouldShowAlert: true, // Mostrar alerta al usuario
-    shouldPlaySound: true, // Reproducir sonido
+    shouldShowAlert: true, 
+    shouldPlaySound: true, 
     shouldSetBadge: false, // No cambiar el icono de la app
   }),
 });

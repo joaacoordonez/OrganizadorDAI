@@ -6,8 +6,8 @@ const TaskContext = createContext();
 export const useTasks = () => useContext(TaskContext);
 
 export const TaskProvider = ({ children }) => {
-  const [tareas, setTareas] = useState([]); // Lista de todas las tareas
-  const [categorias, setCategorias] = useState(['Examenes', 'Compras', 'ToDo']); // Categorías disponibles
+  const [tareas, setTareas] = useState([]); 
+  const [categorias, setCategorias] = useState(['Examenes', 'Compras', 'ToDo']); 
 
  
   // Cargar datos guardados al iniciar
