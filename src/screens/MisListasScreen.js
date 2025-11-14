@@ -20,7 +20,7 @@ const MisListasScreen = ({ navigation }) => {
         {/* Navegar a la pantalla de tareas por categoria */}
         <TouchableOpacity
           style={styles.categoryTouchable}
-          onPress={() => navigation.navigate('CategoriaTareasScreen', { category: item })}
+          onPress={() => navigation.navigate('CategoriaTareas', { category: item })}
         >
           <LinearGradient
             colors={['#4CAF50', '#45a049']}
